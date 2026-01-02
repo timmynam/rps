@@ -7,15 +7,17 @@ function getComputerChoice() {
     return choices[randomIndex];
 }
 
-function getHumanChoice() {
-    return prompt("Enter rock, paper, or scissors:");
-}
-
 let humanScore = 0;
 let computerScore = 0;
 
-function playRound(humanChoice, computerChoice) {
+const resultsDiv = document.querySelector("#results");
+const scoreDiv = document.querySelector("#score");
+const buttons = document.querySelectorAll("button")
+
+function playRound(humanChoice) {
+    const computerChoice = getComputerChoice();
     humanChoice = humanChoice.toLowerCase();
+
     if (humanChoice === computerChoice) {
         console.log("It's a tie")
         return;
@@ -32,37 +34,30 @@ function playRound(humanChoice, computerChoice) {
         computerScore++;
         console.log(`You lose. ${computerChoice} beats ${humanChoice}.`)
     }
+
+    updateScore();
+    checkWinner();
 }
 
-function playGame() {
-    humanScore = 0;
-    computerScore = 0;
+function updateScore(){
+    scoreDiv.textContent = `Score -> You :${humanScore} | Computer: ${computerScore}`
+}
 
-    for (let i = 0; i < 5; i++) {
-        console.log(`--- Round ${i + 1} ---`);
-
-        const humanChoice = getHumanChoice();
-        if (humanChoice === null) {
-            console.log("Game cancelled.");
-            return; // stops the whole game cleanly
+function checkWinner(){
+    if(humanScore === 5 || computerScore === 5){
+        if(humanScore > computerScore){
+            resultsDiv.textContent = "You win the game!";
+        } else{
+            resultsDiv.textContent = "Computer wins the game."
         }
-
-        const computerChoice = getComputerChoice();
-        playRound(humanChoice, computerChoice);
-
-        console.log(`Score -> You: ${humanScore} | Computer: ${computerScore}`);
-    }
-
-    console.log("------- GAME OVER -------");
-    if (humanScore > computerScore) {
-        console.log("You win the game!");
-    } else if (humanScore === computerScore) {
-        console.log("Draw!");
-    } else {
-        console.log("Computer wins the game!");
+        buttons.forEach(button => button.disabled = true);
     }
 }
 
-    playGame();
+buttons.forEach(button =>{
+    button.addEventListener('click', () =>{
+        playRound(button.dataset.choice);
+    });
+});
 
 
